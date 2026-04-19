@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="SLEB-WEB">
+<meta name="theme-color" content="#ff0000">
+<title>SLEB-WEB</title>
+<style>
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;font-family:sans-serif;background:#000;color:#fff;-webkit-tap-highlight-color:transparent;}
+#app{display:none;}
+#login{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;}
+#menu{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;}
+.lock{font-size:85px;margin-bottom:15px;animation:float 3s infinite;}
+@keyframes float{50%{transform:translateY(-15px);}}
+h1{color:#ff0000;text-shadow:0 0 15px red;margin:0;}
+h2{margin:15px 0;}
+.menu{display:flex;flex-direction:column;gap:10px;width:220px;}
+button{background:none;border:1px solid #444;color:#ccc;padding:12px;border-radius:6px;font-size:16px;cursor:pointer;width:50%;}
+button:active{background:#222;}
+input[type=password]{background:#111;border:1px solid #444;color:#fff;padding:10px;border-radius:6px;font-size:16px;width:220px;text-align:center;}
+.screen{display:none;}
+.active{display:flex;flex-direction:column;align-items:center;min-height:100%;padding-bottom:20px;}
+.top-bar{display:flex;gap:10px;margin:15px;width:calc(100% - 30px);}
+.top-bar button{flex:1;}
+.card{background:#111;padding:15px;margin:10px 15px;border-radius:12px;width:calc(100% - 30px);display:flex;flex-direction:column;gap:8px;border:1px solid #222;}
+textarea{width:100%;min-height:80px;padding:8px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:15px;resize:vertical;}
+img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
+.file-btn{background:#1a1a1a;border:1px dashed #555;color:#888;font-size:13px;}
+.del-btn{background:none;border:1px solid #600;color:#f66;}
+#error{color:#f55;font-size:14px;}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="lock">🗂</div>
+  <h1>SLEB-WEB</h1>
+  <input type="password" id="codeInput" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkCode()">
+  <button onclick="checkCode()">Entrar</button>
+  <p id="error"></p>
+</div>
+
+<div id="app">
+  <div id="menu" class="screen active">
+    <h2> Menú</h2>
+    <div class="menu">
+      <button onclick="openSection('ciudadania_valores')">🌍 Ciudadanía y Valores</button>
+      <button onclick="openSection('lenguaje')">📖 Lenguaje</button>
+      <button onclick="openSection('precalculo')">📐 Precálculo</button>
+      <button onclick="openSection('ciencias')">🔬 Ciencias</button>
+      <button onclick="openSecret()">🍑 SECRET</button>
+      <button onclick="openDazer()">⚡ DAZER</button>
+    </div>
+    <br>
+    <div class="menu">
+      <button onclick="refreshApp()">🔄 Refrescar</button>
+      <button onclick="logout()">🍑 Salir</button>
+    </div>
+  </div>
+  <div id="ciudadania_valores" class="screen"></div>
+  <div id="lenguaje" class="screen"></div>
+  <div id="precalculo" class="screen"></div>
+  <div id="ciencias" class="screen"></div>
+  <div id="secret" class="screen"></div>
+  <div id="dazer" class="screen"></div>
+</div>
+
+<script>
+const SECRET="sixseven";
+function checkCode(){
+  const v=document.getElementById("codeInput").value;
+  if(v===SECRET){
+    document.getElementById("login").style.display="none";
+    document.getElementById("app").style.display="block";
+    localStorage.setItem("logged","true");
+  }else{
+    document.getElementById("error").textContent="❌ Contraseña incorrecta";
+  }
+}
+window.onload=function(){
+  if(localStorage.getItem("logged")==="true"){
+    document.getElementById("login").style.display="none";
+    document.getElementById("app").style.display="block";
+  }
+};
+function refreshApp(){location.reload();}
+function logout(){localStorage.removeItem("logged");location.reload();}
+function openSection(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  const sec=document.getElementById(id);
+  sec.classList.add("active");
+  if(!sec.dataset.loaded)loadSection(id);
+}
+function openSecret(){if(prompt("Código:")==="67")openSection("secret");}
+function openDazer(){if(prompt("Código:")==="marco")openSection("dazer");}
+function loadSection(id){
+  const c=document.getElementById(id);
+  c.dataset.loaded=true;
+  c.innerHTML="";
+  const bar=document.createElement("div");
+  bar.className="top-bar";
+  const back=document.createElement("button");
+  back.textContent="← Volver";
+  back.onclick=openMenu;
+  const add=document.createElement("button");
+  add.textContent="+ Añadir nota";
+  add.onclick=()=>addCard(id);
+  bar.append(back,add);
+  c.appendChild(bar);
+  const data=JSON.parse(localStorage.getItem(id)||"[]");
+  data.forEach(d=>addCard(id,d.text,d.img));
+}
+function openMenu(){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById("menu").classList.add("active");
+}
+function save(id){
+  const data=[];
+  document.querySelectorAll("#"+id+" .card").forEach(c=>{
+    const img=c.querySelector("img.card-img");
+    data.push({text:c.querySelector("textarea").value,img:img?img.src:""});
+  });
+  localStorage.setItem(id,JSON.stringify(data));
+}
+function addCard(id,text="",imgSrc=""){
+  const div=document.createElement("div");
+  div.className="card";
+  const file=document.createElement("input");
+  file.type="file";file.accept="image/*";file.style.display="none";
+  const fileBtn=document.createElement("button");
+  fileBtn.className="file-btn";fileBtn.textContent="📷 Agregar imagen";
+  fileBtn.onclick=()=>file.click();
+  const img=document.createElement("img");
+  img.className="card-img";
+  if(imgSrc){img.src=imgSrc;img.style.display="block";fileBtn.style.display="none";}
+  else{img.style.display="none";}
+  img.onclick=()=>{
+    if(confirm("¿Eliminar imagen?")){img.src="";img.style.display="none";fileBtn.style.display="block";save(id);}
+  };
+  file.onchange=()=>{
+    const r=new FileReader();
+    r.onload=e=>{img.src=e.target.result;img.style.display="block";fileBtn.style.display="none";save(id);};
+    r.readAsDataURL(file.files[0]);
+  };
+  const ta=document.createElement("textarea");
+  ta.value=text;ta.placeholder="Escribe aquí tu nota...";ta.oninput=()=>save(id);
+  const del=document.createElement("button");
+  del.textContent="🗑️ Eliminar nota";del.className="del-btn";
+  del.onclick=()=>{if(confirm("¿Eliminar esta nota?")){div.remove();save(id);}};
+  div.append(fileBtn,file,img,ta,del);
+  document.getElementById(id).appendChild(div);
+  save(id);
+}
+</script>
+</body>
+</html>
