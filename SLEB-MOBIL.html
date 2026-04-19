@@ -27,7 +27,7 @@ input[type=password]{background:#111;border:1px solid #444;color:#fff;padding:10
 .top-bar button{flex:1;}
 .card{background:#111;padding:15px;margin:10px 15px;border-radius:12px;width:calc(100% - 30px);display:flex;flex-direction:column;gap:8px;border:1px solid #222;}
 textarea{width:100%;min-height:80px;padding:8px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:15px;resize:vertical;}
-img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
+img.card-img{max-width:100%;border-radius:10px;}
 .file-btn{background:#1a1a1a;border:1px dashed #555;color:#888;font-size:13px;}
 .del-btn{background:none;border:1px solid #600;color:#f66;}
 #error{color:#f55;font-size:14px;}
@@ -53,6 +53,9 @@ img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
       <button onclick="openSection('lenguaje')">📖 Lenguaje</button>
       <button onclick="openSection('precalculo')">📐 Precálculo</button>
       <button onclick="openSection('ciencias')">🔬 Ciencias</button>
+      <button onclick="openSection('ingles')">🇬🇧 Inglés</button>
+      <button onclick="openSection('aleman')">🇩🇪 Alemán</button>
+      <button onclick="openSection('frances')">🇫🇷 Francés</button>
       <button onclick="openSecret()">🍑 SECRET</button>
       <button onclick="openDazer()">⚡ DAZER</button>
     </div>
@@ -66,6 +69,9 @@ img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
   <div id="lenguaje" class="screen"></div>
   <div id="precalculo" class="screen"></div>
   <div id="ciencias" class="screen"></div>
+  <div id="ingles" class="screen"></div>
+  <div id="aleman" class="screen"></div>
+  <div id="frances" class="screen"></div>
   <div id="secret" class="screen"></div>
   <div id="dazer" class="screen"></div>
 </div>
@@ -148,10 +154,8 @@ async function loadSection(id){
   loading.textContent = "⏳ Cargando notas...";
   container.appendChild(loading);
 
-  // Escuchar cambios en tiempo real
   if(listeners[id]) listeners[id]();
   listeners[id] = onSnapshot(collection(db, id), (snapshot) => {
-    // Eliminar cards existentes pero mantener top-bar y loading
     const cards = container.querySelectorAll(".card");
     cards.forEach(c => c.remove());
     const lp = container.querySelector(".loading");
@@ -183,12 +187,7 @@ function renderCard(id, docId, text, imgSrc){
   if(imgSrc){ img.src = imgSrc; img.style.display = "block"; fileBtn.style.display = "none"; }
   else { img.style.display = "none"; }
 
-  img.onclick = async () => {
-    if(confirm("¿Eliminar imagen?")){
-      img.src = ""; img.style.display = "none"; fileBtn.style.display = "block";
-      await updateDoc(doc(db, id, docId), { img: "" });
-    }
-  };
+  // ❌ Se eliminó el onclick de la imagen (ya no se puede borrar foto)
 
   file.onchange = () => {
     const r = new FileReader();
