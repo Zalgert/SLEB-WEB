@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="SLEB-WEB">
 <meta name="theme-color" content="#ff0000">
 <title>SLEB-WEB</title>
 <style>
@@ -17,10 +15,10 @@ html,body{height:100%;margin:0;font-family:sans-serif;background:#000;color:#fff
 #menu{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;}
 .lock{font-size:85px;margin-bottom:15px;animation:float 3s infinite;}
 @keyframes float{50%{transform:translateY(-15px);}}
-h1{color:#ff0000;text-shadow:0 0 15px red;margin:0;}
-h2{margin:15px 0;}
+h1{color:#ff0000;text-shadow:0 0 10px red;margin:0;}
+h2{margin:10px 0;}
 .menu{display:flex;flex-direction:column;gap:10px;width:220px;}
-button{background:none;border:1px solid #444;color:#ccc;padding:12px;border-radius:6px;font-size:16px;cursor:pointer;width:50%;}
+button{background:none;border:1px solid #444;color:#ccc;padding:12px;border-radius:6px;font-size:16px;cursor:pointer;width:60%;}
 button:active{background:#222;}
 input[type=password]{background:#111;border:1px solid #444;color:#fff;padding:10px;border-radius:6px;font-size:16px;width:220px;text-align:center;}
 .screen{display:none;}
@@ -33,6 +31,8 @@ img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
 .file-btn{background:#1a1a1a;border:1px dashed #555;color:#888;font-size:13px;}
 .del-btn{background:none;border:1px solid #600;color:#f66;}
 #error{color:#f55;font-size:14px;}
+.loading{color:#888;font-size:14px;margin:20px;}
+.sync-badge{font-size:11px;color:#4a4;margin-left:5px;}
 </style>
 </head>
 <body>
@@ -58,8 +58,8 @@ img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
     </div>
     <br>
     <div class="menu">
-      <button onclick="refreshApp()">🔄 Refrescar</button>
-      <button onclick="logout()">🍑 Salir</button>
+      <button onclick="refreshApp()">🥒 Refrescar</button>
+      <button onclick="logout()"> 🍑Salir</button>
     </div>
   </div>
   <div id="ciudadania_valores" class="screen"></div>
@@ -70,91 +70,163 @@ img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
   <div id="dazer" class="screen"></div>
 </div>
 
-<script>
-const SECRET="sixseven";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAUxe5KsI0KbHguw41jPINqImdmzvpDNmI",
+  authDomain: "sleb-web.firebaseapp.com",
+  projectId: "sleb-web",
+  storageBucket: "sleb-web.firebasestorage.app",
+  messagingSenderId: "719197483079",
+  appId: "1:719197483079:web:2a005105af5a40d86e4162"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const SECRET = "sixseven";
+let listeners = {};
+
 function checkCode(){
-  const v=document.getElementById("codeInput").value;
-  if(v===SECRET){
-    document.getElementById("login").style.display="none";
-    document.getElementById("app").style.display="block";
+  const v = document.getElementById("codeInput").value;
+  if(v === SECRET){
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "block";
     localStorage.setItem("logged","true");
-  }else{
-    document.getElementById("error").textContent="❌ Contraseña incorrecta";
+  } else {
+    document.getElementById("error").textContent = "❌ Contraseña incorrecta";
   }
 }
-window.onload=function(){
-  if(localStorage.getItem("logged")==="true"){
-    document.getElementById("login").style.display="none";
-    document.getElementById("app").style.display="block";
+window.checkCode = checkCode;
+
+window.onload = function(){
+  if(localStorage.getItem("logged") === "true"){
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "block";
   }
 };
-function refreshApp(){location.reload();}
-function logout(){localStorage.removeItem("logged");location.reload();}
-function openSection(id){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-  const sec=document.getElementById(id);
+
+window.refreshApp = () => location.reload();
+window.logout = () => { localStorage.removeItem("logged"); location.reload(); };
+
+window.openSection = function(id){
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  const sec = document.getElementById(id);
   sec.classList.add("active");
-  if(!sec.dataset.loaded)loadSection(id);
-}
-function openSecret(){if(prompt("Código:")==="67")openSection("secret");}
-function openDazer(){if(prompt("Código:")==="marco")openSection("dazer");}
-function loadSection(id){
-  const c=document.getElementById(id);
-  c.dataset.loaded=true;
-  c.innerHTML="";
-  const bar=document.createElement("div");
-  bar.className="top-bar";
-  const back=document.createElement("button");
-  back.textContent="← Volver";
-  back.onclick=openMenu;
-  const add=document.createElement("button");
-  add.textContent="+ Añadir nota";
-  add.onclick=()=>addCard(id);
-  bar.append(back,add);
-  c.appendChild(bar);
-  const data=JSON.parse(localStorage.getItem(id)||"[]");
-  data.forEach(d=>addCard(id,d.text,d.img));
-}
+  if(!sec.dataset.loaded) loadSection(id);
+};
+
+window.openSecret = () => { if(prompt("Código:") === "67") window.openSection("secret"); };
+window.openDazer = () => { if(prompt("Código:") === "marco") window.openSection("dazer"); };
+
 function openMenu(){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById("menu").classList.add("active");
 }
-function save(id){
-  const data=[];
-  document.querySelectorAll("#"+id+" .card").forEach(c=>{
-    const img=c.querySelector("img.card-img");
-    data.push({text:c.querySelector("textarea").value,img:img?img.src:""});
+window.openMenu = openMenu;
+
+async function loadSection(id){
+  const container = document.getElementById(id);
+  container.dataset.loaded = true;
+  container.innerHTML = "";
+
+  const bar = document.createElement("div");
+  bar.className = "top-bar";
+  const back = document.createElement("button");
+  back.textContent = "← Volver";
+  back.onclick = openMenu;
+  const add = document.createElement("button");
+  add.textContent = "+ Añadir nota";
+  add.onclick = () => addCard(id);
+  bar.append(back, add);
+  container.appendChild(bar);
+
+  const loading = document.createElement("p");
+  loading.className = "loading";
+  loading.textContent = "⏳ Cargando notas...";
+  container.appendChild(loading);
+
+  // Escuchar cambios en tiempo real
+  if(listeners[id]) listeners[id]();
+  listeners[id] = onSnapshot(collection(db, id), (snapshot) => {
+    // Eliminar cards existentes pero mantener top-bar y loading
+    const cards = container.querySelectorAll(".card");
+    cards.forEach(c => c.remove());
+    const lp = container.querySelector(".loading");
+    if(lp) lp.remove();
+
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      renderCard(id, docSnap.id, data.text || "", data.img || "");
+    });
   });
-  localStorage.setItem(id,JSON.stringify(data));
 }
-function addCard(id,text="",imgSrc=""){
-  const div=document.createElement("div");
-  div.className="card";
-  const file=document.createElement("input");
-  file.type="file";file.accept="image/*";file.style.display="none";
-  const fileBtn=document.createElement("button");
-  fileBtn.className="file-btn";fileBtn.textContent="📷 Agregar imagen";
-  fileBtn.onclick=()=>file.click();
-  const img=document.createElement("img");
-  img.className="card-img";
-  if(imgSrc){img.src=imgSrc;img.style.display="block";fileBtn.style.display="none";}
-  else{img.style.display="none";}
-  img.onclick=()=>{
-    if(confirm("¿Eliminar imagen?")){img.src="";img.style.display="none";fileBtn.style.display="block";save(id);}
+
+function renderCard(id, docId, text, imgSrc){
+  const container = document.getElementById(id);
+  const div = document.createElement("div");
+  div.className = "card";
+  div.dataset.docId = docId;
+
+  const file = document.createElement("input");
+  file.type = "file"; file.accept = "image/*"; file.style.display = "none";
+
+  const fileBtn = document.createElement("button");
+  fileBtn.className = "file-btn";
+  fileBtn.textContent = "📷 Agregar imagen";
+  fileBtn.onclick = () => file.click();
+
+  const img = document.createElement("img");
+  img.className = "card-img";
+  if(imgSrc){ img.src = imgSrc; img.style.display = "block"; fileBtn.style.display = "none"; }
+  else { img.style.display = "none"; }
+
+  img.onclick = async () => {
+    if(confirm("¿Eliminar imagen?")){
+      img.src = ""; img.style.display = "none"; fileBtn.style.display = "block";
+      await updateDoc(doc(db, id, docId), { img: "" });
+    }
   };
-  file.onchange=()=>{
-    const r=new FileReader();
-    r.onload=e=>{img.src=e.target.result;img.style.display="block";fileBtn.style.display="none";save(id);};
+
+  file.onchange = () => {
+    const r = new FileReader();
+    r.onload = async e => {
+      img.src = e.target.result;
+      img.style.display = "block";
+      fileBtn.style.display = "none";
+      await updateDoc(doc(db, id, docId), { img: e.target.result });
+    };
     r.readAsDataURL(file.files[0]);
   };
-  const ta=document.createElement("textarea");
-  ta.value=text;ta.placeholder="Escribe aquí tu nota...";ta.oninput=()=>save(id);
-  const del=document.createElement("button");
-  del.textContent="🗑️ Eliminar nota";del.className="del-btn";
-  del.onclick=()=>{if(confirm("¿Eliminar esta nota?")){div.remove();save(id);}};
-  div.append(fileBtn,file,img,ta,del);
-  document.getElementById(id).appendChild(div);
-  save(id);
+
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.placeholder = "Escribe aquí tu nota...";
+  let timer;
+  ta.oninput = () => {
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      await updateDoc(doc(db, id, docId), { text: ta.value });
+    }, 800);
+  };
+
+  const del = document.createElement("button");
+  del.textContent = "🗑️ Eliminar nota";
+  del.className = "del-btn";
+  del.onclick = async () => {
+    if(confirm("¿Eliminar esta nota?")){
+      await deleteDoc(doc(db, id, docId));
+    }
+  };
+
+  div.append(fileBtn, file, img, ta, del);
+  container.appendChild(div);
+}
+
+async function addCard(id){
+  await addDoc(collection(db, id), { text: "", img: "", createdAt: Date.now() });
 }
 </script>
 </body>
