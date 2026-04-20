@@ -53,7 +53,7 @@ img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
     <h2> Menú</h2>
     <div class="menu">
       <button onclick="openSection('ciudadania_valores')">🌍 Ciudadanía y Valores</button>
-      <button onclick="openSection('lenguaje')">📖 Lenguaje</button>
+      <button onclick="openSection('lenguaje_literatura')">📖 Lenguaje</button>
       <button onclick="openSection('precalculo')">📐 Precálculo</button>
       <button onclick="openSection('ciencias')">🔬 Ciencias</button>
       <button onclick="openSection('ingles')">🇬🇧 Inglés</button>
@@ -65,8 +65,8 @@ img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
     </div>
     <br>
     <div class="menu">
-      <button onclick="refreshApp()">🥒 Refrescar</button>
-      <button onclick="logout()">🍑 Salir</button>
+      <button onclick="refreshApp()">🧊 Refrescar</button>
+      <button onclick="logout()">🔒 Salir</button>
     </div>
   </div>
   <div id="ciudadania_valores" class="screen"></div>
@@ -138,7 +138,7 @@ window.openGeheimnis = () => { if(prompt("Código:") === "67") window.openSectio
 window.openDazer = () => window.openSection("dazer");
 window.openLinks = () => {
   if(prompt("Código Links:") === "MARCO GAY") window.openSection("links");
-  else alert("Código incorrecto");
+  else alert("Contraseña incorrecta");
 };
 
 function openMenu(){
@@ -195,7 +195,7 @@ async function loadSection(id){
 
   const loading = document.createElement("p");
   loading.className = "loading";
-  loading.textContent = "⏳ Cargando...";
+  loading.textContent = "⏳ Cargando el SLEB espere un rato...";
   container.appendChild(loading);
 
   if(listeners[id]) listeners[id]();
@@ -242,7 +242,7 @@ function renderCard(id, docId, text, imgSrc){
 
   const fileBtn = document.createElement("button");
   fileBtn.className = "file-btn";
-  fileBtn.textContent = "📷 Agregar imagen";
+  fileBtn.textContent = "imagen";
   fileBtn.onclick = () => file.click();
 
   const img = document.createElement("img");
