@@ -7,7 +7,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#ff0000">
 <title>SLEB-WEB</title>
-
 <style>
 *{box-sizing:border-box;}
 html,body{height:100%;margin:0;font-family:sans-serif;background:#000;color:#fff;-webkit-tap-highlight-color:transparent;}
@@ -27,32 +26,18 @@ input[type=password]{background:#111;border:1px solid #444;color:#fff;padding:10
 .top-bar{display:flex;gap:10px;margin:15px;width:calc(100% - 30px);}
 .top-bar button{flex:1;}
 .card{background:#111;padding:15px;margin:10px 15px;border-radius:12px;width:calc(100% - 30px);display:flex;flex-direction:column;gap:8px;border:1px solid #222;}
+.move-bar{display:flex;gap:8px;justify-content:flex-end;}
+.move-bar button{width:auto;padding:6px 14px;font-size:18px;border-color:#333;}
 textarea{width:100%;min-height:80px;padding:8px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:15px;resize:vertical;}
 img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
 .file-btn{background:#1a1a1a;border:1px dashed #555;color:#888;font-size:13px;}
 #error{color:#f55;font-size:14px;}
 .loading{color:#888;font-size:14px;margin:20px;}
-
-/* VISOR */
-#fullscreenViewer{
-  position:fixed;
-  top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.95);
-  display:none;justify-content:center;align-items:center;
-  z-index:9999;
-}
-#fullscreenViewer img{
-  max-width:95%;max-height:95%;border-radius:10px;
-}
-#closeBtn{
-  position:absolute;top:15px;right:20px;
-  font-size:28px;color:#fff;cursor:pointer;
-  background:rgba(0,0,0,0.5);
-  padding:5px 10px;border-radius:50%;
-}
+#fullscreenViewer{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:none;justify-content:center;align-items:center;z-index:9999;}
+#fullscreenViewer img{max-width:95%;max-height:95%;border-radius:10px;}
+#closeBtn{position:absolute;top:15px;right:20px;font-size:28px;color:#fff;cursor:pointer;background:rgba(0,0,0,0.5);padding:5px 10px;border-radius:50%;}
 </style>
 </head>
-
 <body>
 
 <div id="login">
@@ -76,17 +61,14 @@ img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
       <button onclick="openSection('frances')">🇫🇷 Francés</button>
       <button onclick="openGeheimnis()">📕 Geheimnis</button>
       <button onclick="openDazer()">💵🛍 DAZER</button>
-      <button onclick="openLinks()">🔗 Links</button> <!-- NUEVO -->
+      <button onclick="openLinks()">🔗 Links</button>
     </div>
-
     <br>
-
     <div class="menu">
       <button onclick="refreshApp()">🥒 Refrescar</button>
-      <button onclick="logout()"> 🍑Salir</button>
+      <button onclick="logout()">🍑 Salir</button>
     </div>
   </div>
-
   <div id="ciudadania_valores" class="screen"></div>
   <div id="lenguaje" class="screen"></div>
   <div id="precalculo" class="screen"></div>
@@ -96,7 +78,7 @@ img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
   <div id="frances" class="screen"></div>
   <div id="secret" class="screen"></div>
   <div id="dazer" class="screen"></div>
-  <div id="links" class="screen"></div> <!-- NUEVO -->
+  <div id="links" class="screen"></div>
 </div>
 
 <div id="fullscreenViewer">
@@ -154,14 +136,9 @@ window.openSection = function(id){
 
 window.openGeheimnis = () => { if(prompt("Código:") === "67") window.openSection("secret"); };
 window.openDazer = () => window.openSection("dazer");
-
-/* 🔥 NUEVO */
 window.openLinks = () => {
-  if(prompt("Código Links:") === "MARCO GAY"){
-    window.openSection("links");
-  } else {
-    alert("Código incorrecto");
-  }
+  if(prompt("Código Links:") === "MARCO GAY") window.openSection("links");
+  else alert("Código incorrecto");
 };
 
 function openMenu(){
@@ -173,10 +150,31 @@ window.openMenu = openMenu;
 window.openFullscreen = function(src){
   document.getElementById("fullscreenImg").src = src;
   document.getElementById("fullscreenViewer").style.display = "flex";
-}
-
+};
 window.closeFullscreen = function(){
   document.getElementById("fullscreenViewer").style.display = "none";
+};
+
+async function saveOrder(sectionId){
+  const container = document.getElementById(sectionId);
+  const cards = [...container.querySelectorAll(".card")];
+  const updates = cards.map((card, idx) => {
+    const docId = card.dataset.docId;
+    if(docId) return updateDoc(doc(db, sectionId, docId), { order: idx });
+  });
+  await Promise.all(updates);
+}
+
+function moveCard(card, direction, sectionId){
+  const container = card.parentNode;
+  if(direction === "up"){
+    const prev = card.previousElementSibling;
+    if(prev && prev.classList.contains("card")) container.insertBefore(card, prev);
+  } else {
+    const next = card.nextElementSibling;
+    if(next && next.classList.contains("card")) container.insertBefore(next, card);
+  }
+  saveOrder(sectionId);
 }
 
 async function loadSection(id){
@@ -207,7 +205,15 @@ async function loadSection(id){
     const lp = container.querySelector(".loading");
     if(lp) lp.remove();
 
-    snapshot.forEach(docSnap => {
+    const docs = [];
+    snapshot.forEach(docSnap => docs.push(docSnap));
+    docs.sort((a, b) => {
+      const ao = a.data().order ?? a.data().createdAt ?? 0;
+      const bo = b.data().order ?? b.data().createdAt ?? 0;
+      return ao - bo;
+    });
+
+    docs.forEach(docSnap => {
       const data = docSnap.data();
       renderCard(id, docSnap.id, data.text || "", data.img || "");
     });
@@ -218,6 +224,18 @@ function renderCard(id, docId, text, imgSrc){
   const container = document.getElementById(id);
   const div = document.createElement("div");
   div.className = "card";
+  div.dataset.docId = docId;
+
+  // ✅ Botones subir y bajar
+  const moveBar = document.createElement("div");
+  moveBar.className = "move-bar";
+  const btnUp = document.createElement("button");
+  btnUp.textContent = "⬆️";
+  btnUp.onclick = () => moveCard(div, "up", id);
+  const btnDown = document.createElement("button");
+  btnDown.textContent = "⬇️";
+  btnDown.onclick = () => moveCard(div, "down", id);
+  moveBar.append(btnUp, btnDown);
 
   const file = document.createElement("input");
   file.type = "file"; file.accept = "image/*"; file.style.display = "none";
@@ -229,7 +247,6 @@ function renderCard(id, docId, text, imgSrc){
 
   const img = document.createElement("img");
   img.className = "card-img";
-
   if(imgSrc){
     img.src = imgSrc;
     img.style.display = "block";
@@ -262,12 +279,12 @@ function renderCard(id, docId, text, imgSrc){
     }, 800);
   };
 
-  div.append(fileBtn, file, img, ta);
+  div.append(moveBar, fileBtn, file, img, ta);
   container.appendChild(div);
 }
 
 async function addCard(id){
-  await addDoc(collection(db, id), { text: "", img: "", createdAt: Date.now() });
+  await addDoc(collection(db, id), { text: "", img: "", createdAt: Date.now(), order: Date.now() });
 }
 </script>
 </body>
