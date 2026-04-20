@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#ff0000">
 <title>SLEB-WEB</title>
+
 <style>
 *{box-sizing:border-box;}
 html,body{height:100%;margin:0;font-family:sans-serif;background:#000;color:#fff;-webkit-tap-highlight-color:transparent;}
@@ -27,14 +28,31 @@ input[type=password]{background:#111;border:1px solid #444;color:#fff;padding:10
 .top-bar button{flex:1;}
 .card{background:#111;padding:15px;margin:10px 15px;border-radius:12px;width:calc(100% - 30px);display:flex;flex-direction:column;gap:8px;border:1px solid #222;}
 textarea{width:100%;min-height:80px;padding:8px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:15px;resize:vertical;}
-img.card-img{max-width:100%;border-radius:10px;}
+img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
 .file-btn{background:#1a1a1a;border:1px dashed #555;color:#888;font-size:13px;}
-.del-btn{background:none;border:1px solid #600;color:#f66;}
 #error{color:#f55;font-size:14px;}
 .loading{color:#888;font-size:14px;margin:20px;}
-.sync-badge{font-size:11px;color:#4a4;margin-left:5px;}
+
+/* VISOR */
+#fullscreenViewer{
+  position:fixed;
+  top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.95);
+  display:none;justify-content:center;align-items:center;
+  z-index:9999;
+}
+#fullscreenViewer img{
+  max-width:95%;max-height:95%;border-radius:10px;
+}
+#closeBtn{
+  position:absolute;top:15px;right:20px;
+  font-size:28px;color:#fff;cursor:pointer;
+  background:rgba(0,0,0,0.5);
+  padding:5px 10px;border-radius:50%;
+}
 </style>
 </head>
+
 <body>
 
 <div id="login">
@@ -56,15 +74,19 @@ img.card-img{max-width:100%;border-radius:10px;}
       <button onclick="openSection('ingles')">🇬🇧 Inglés</button>
       <button onclick="openSection('aleman')">🇩🇪 Alemán</button>
       <button onclick="openSection('frances')">🇫🇷 Francés</button>
-      <button onclick="openSecret()">🍑 SECRET</button>
-      <button onclick="openDazer()">⚡ DAZER</button>
+      <button onclick="openGeheimnis()">📕 Geheimnis</button>
+      <button onclick="openDazer()">💵🛍 DAZER</button>
+      <button onclick="openLinks()">🔗 Links</button> <!-- NUEVO -->
     </div>
+
     <br>
+
     <div class="menu">
       <button onclick="refreshApp()">🥒 Refrescar</button>
       <button onclick="logout()"> 🍑Salir</button>
     </div>
   </div>
+
   <div id="ciudadania_valores" class="screen"></div>
   <div id="lenguaje" class="screen"></div>
   <div id="precalculo" class="screen"></div>
@@ -74,11 +96,17 @@ img.card-img{max-width:100%;border-radius:10px;}
   <div id="frances" class="screen"></div>
   <div id="secret" class="screen"></div>
   <div id="dazer" class="screen"></div>
+  <div id="links" class="screen"></div> <!-- NUEVO -->
+</div>
+
+<div id="fullscreenViewer">
+  <span id="closeBtn" onclick="closeFullscreen()">✖</span>
+  <img id="fullscreenImg">
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+import { getFirestore, addDoc, updateDoc, doc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAUxe5KsI0KbHguw41jPINqImdmzvpDNmI",
@@ -102,7 +130,7 @@ function checkCode(){
     document.getElementById("app").style.display = "block";
     localStorage.setItem("logged","true");
   } else {
-    document.getElementById("error").textContent = "❌ Contraseña incorrecta";
+    document.getElementById("error").textContent = "X Contraseña incorrecta";
   }
 }
 window.checkCode = checkCode;
@@ -124,14 +152,32 @@ window.openSection = function(id){
   if(!sec.dataset.loaded) loadSection(id);
 };
 
-window.openSecret = () => { if(prompt("Código:") === "67") window.openSection("secret"); };
-window.openDazer = () => { if(prompt("Código:") === "marco") window.openSection("dazer"); };
+window.openGeheimnis = () => { if(prompt("Código:") === "67") window.openSection("secret"); };
+window.openDazer = () => window.openSection("dazer");
+
+/* 🔥 NUEVO */
+window.openLinks = () => {
+  if(prompt("Código Links:") === "MARCO GAY"){
+    window.openSection("links");
+  } else {
+    alert("Código incorrecto");
+  }
+};
 
 function openMenu(){
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById("menu").classList.add("active");
 }
 window.openMenu = openMenu;
+
+window.openFullscreen = function(src){
+  document.getElementById("fullscreenImg").src = src;
+  document.getElementById("fullscreenViewer").style.display = "flex";
+}
+
+window.closeFullscreen = function(){
+  document.getElementById("fullscreenViewer").style.display = "none";
+}
 
 async function loadSection(id){
   const container = document.getElementById(id);
@@ -151,7 +197,7 @@ async function loadSection(id){
 
   const loading = document.createElement("p");
   loading.className = "loading";
-  loading.textContent = "⏳ Cargando notas...";
+  loading.textContent = "⏳ Cargando...";
   container.appendChild(loading);
 
   if(listeners[id]) listeners[id]();
@@ -172,7 +218,6 @@ function renderCard(id, docId, text, imgSrc){
   const container = document.getElementById(id);
   const div = document.createElement("div");
   div.className = "card";
-  div.dataset.docId = docId;
 
   const file = document.createElement("input");
   file.type = "file"; file.accept = "image/*"; file.style.display = "none";
@@ -184,10 +229,15 @@ function renderCard(id, docId, text, imgSrc){
 
   const img = document.createElement("img");
   img.className = "card-img";
-  if(imgSrc){ img.src = imgSrc; img.style.display = "block"; fileBtn.style.display = "none"; }
-  else { img.style.display = "none"; }
 
-  // ❌ Se eliminó el onclick de la imagen (ya no se puede borrar foto)
+  if(imgSrc){
+    img.src = imgSrc;
+    img.style.display = "block";
+    fileBtn.style.display = "none";
+    img.onclick = () => openFullscreen(img.src);
+  } else {
+    img.style.display = "none";
+  }
 
   file.onchange = () => {
     const r = new FileReader();
@@ -195,6 +245,7 @@ function renderCard(id, docId, text, imgSrc){
       img.src = e.target.result;
       img.style.display = "block";
       fileBtn.style.display = "none";
+      img.onclick = () => openFullscreen(img.src);
       await updateDoc(doc(db, id, docId), { img: e.target.result });
     };
     r.readAsDataURL(file.files[0]);
@@ -211,16 +262,7 @@ function renderCard(id, docId, text, imgSrc){
     }, 800);
   };
 
-  const del = document.createElement("button");
-  del.textContent = "🗑️ Eliminar nota";
-  del.className = "del-btn";
-  del.onclick = async () => {
-    if(confirm("¿Eliminar esta nota?")){
-      await deleteDoc(doc(db, id, docId));
-    }
-  };
-
-  div.append(fileBtn, file, img, ta, del);
+  div.append(fileBtn, file, img, ta);
   container.appendChild(div);
 }
 
