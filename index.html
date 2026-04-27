@@ -36,10 +36,73 @@ html,body{height:100%;margin:0;font-family:'Chivo',sans-serif;background:#000;co
 #app{display:none;}
 #login{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;}
 #menu{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;}
-.lock{width:90px;height:90px;background:#000;border-radius:18px;border:2px solid #ff0000;display:flex;align-items:center;justify-content:center;margin-bottom:15px;animation:float 3s infinite;box-shadow:0 0 24px rgba(255,0,0,0.35);}
-.lock-s{font-family:'Chivo',sans-serif;font-size:58px;font-weight:900;color:#ff0000;line-height:1;text-shadow:0 0 18px rgba(255,0,0,0.7);}
+.lock{width:80px;height:80px;background:#000;border-radius:16px;border:2px solid #ff0000;display:flex;align-items:center;justify-content:center;margin-bottom:15px;animation:float 3s infinite;box-shadow:0 0 24px rgba(255,0,0,0.35);overflow:hidden;}
+.lock-s{font-family:'Chivo',sans-serif;font-size:42px;font-weight:900;color:#ff0000;line-height:1;text-shadow:0 0 14px rgba(255,0,0,0.7);display:block;text-align:center;user-select:none;}
 @keyframes float{50%{transform:translateY(-12px);}}
 h1{color:#ff0000;text-shadow:0 0 10px red;margin:0;font-family:'Chivo',sans-serif;font-weight:900;letter-spacing:2px;}
+
+/* ── SPLASH ── */
+#splash{
+  position:fixed;inset:0;background:#000;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  z-index:99999;
+}
+/* líneas de escaneo estilo retro */
+#splash::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,0,0,0.03) 2px,rgba(255,0,0,0.03) 4px);
+  pointer-events:none;
+}
+.splash-icon{
+  width:100px;height:100px;background:#000;
+  border-radius:22px;border:2px solid #ff0000;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  box-shadow:0 0 0 0 rgba(255,0,0,0.6);
+  animation:splashIconIn .5s cubic-bezier(.34,1.56,.64,1) both, splashPulse 2s 1s ease-in-out infinite;
+}
+.splash-icon span{
+  font-family:'Chivo',sans-serif;font-size:60px;font-weight:900;
+  color:#ff0000;line-height:1;
+  text-shadow:0 0 20px rgba(255,0,0,1), 0 0 40px rgba(255,0,0,0.5);
+  user-select:none;
+}
+.splash-title{
+  font-family:'Chivo',sans-serif;font-weight:900;font-size:30px;
+  color:#fff;letter-spacing:8px;margin-top:24px;
+  animation:splashTitleIn .6s .25s ease both;
+  text-transform:uppercase;
+}
+.splash-title b{color:#ff0000;}
+.splash-tagline{
+  font-family:'Chivo',sans-serif;font-size:11px;
+  color:#ff0000;letter-spacing:4px;margin-top:6px;
+  text-transform:uppercase;opacity:.7;
+  animation:splashTitleIn .6s .4s ease both;
+}
+.splash-bar-wrap{
+  width:180px;height:2px;background:#1a1a1a;
+  border-radius:99px;margin-top:44px;overflow:hidden;
+  animation:fadeInBar .3s .5s ease both;
+}
+.splash-bar{
+  height:100%;width:0%;background:linear-gradient(90deg,#800,#ff0000);
+  border-radius:99px;
+  animation:fillBar 1.8s .6s cubic-bezier(.4,0,.2,1) forwards;
+  box-shadow:0 0 10px rgba(255,0,0,0.8);
+}
+.splash-sub{
+  font-family:'Chivo',sans-serif;font-size:10px;
+  color:#2a2a2a;letter-spacing:4px;margin-top:12px;
+  text-transform:uppercase;
+  animation:fadeInBar .3s .6s ease both;
+}
+@keyframes splashIconIn{from{transform:scale(.3) rotate(-10deg);opacity:0}to{transform:scale(1) rotate(0deg);opacity:1}}
+@keyframes splashPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,0,0,0.0)}50%{box-shadow:0 0 0 12px rgba(255,0,0,0.0),0 0 30px rgba(255,0,0,0.4)}}
+@keyframes splashTitleIn{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeInBar{from{opacity:0}to{opacity:1}}
+@keyframes fillBar{0%{width:0%}100%{width:100%}}
+@keyframes splashOut{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.04);pointer-events:none}}
 h2{margin:10px 0;}
 .menu{display:flex;flex-direction:column;gap:10px;width:220px;}
 button{background:none;border:1px solid #444;color:#ccc;padding:12px;border-radius:6px;font-size:16px;cursor:pointer;width:60%;}
@@ -102,6 +165,15 @@ img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
 </style>
 </head>
 <body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-icon"><span>S</span></div>
+  <div class="splash-title">SLEB<b>-</b>WEB</div>
+  <div class="splash-tagline">Sistema de notas</div>
+  <div class="splash-bar-wrap"><div class="splash-bar"></div></div>
+  <div class="splash-sub">Iniciando...</div>
+</div>
 
 <div id="login">
   <div class="lock"><span class="lock-s">S</span></div>
@@ -258,6 +330,12 @@ function checkCode(){
 window.checkCode = checkCode;
 
 window.onload = function(){
+  const splash = document.getElementById("splash");
+  setTimeout(() => {
+    splash.style.animation = "splashOut .6s ease forwards";
+    setTimeout(() => { splash.style.display = "none"; }, 600);
+  }, 2800);
+
   if(localStorage.getItem("logged") === "true"){
     document.getElementById("login").style.display = "none";
     document.getElementById("app").style.display = "block";
