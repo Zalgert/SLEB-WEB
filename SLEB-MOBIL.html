@@ -1,88 +1,91 @@
-<!DOCTYPE html>  <html lang="es">  
-<head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">  
-<meta name="mobile-web-app-capable" content="yes">  
-<meta name="apple-mobile-web-app-capable" content="yes">  
-<meta name="apple-mobile-web-app-status-bar-style" content="black">  
-<meta name="apple-mobile-web-app-title" content="SLEB-WEB">  
-<meta name="theme-color" content="#000000">  
-<title>SLEB-WEB</title>  
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='115' fill='%23000000'/%3E%3Ctext x='256' y='370' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='380' fill='%23ff0000'%3ES%3C/text%3E%3C/svg%3E">  
-<link rel="manifest" id="manifest-placeholder">  
-<script>  
-const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="115" fill="#000000"/><text x="256" y="370" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="380" fill="#ff0000">S</text></svg>`;  
-const iconUrl = 'data:image/svg+xml,' + encodeURIComponent(iconSvg);  
-const manifest = {  
-  name: "SLEB-WEB",  
-  short_name: "SLEB",  
-  start_url: ".",  
-  display: "standalone",  
-  background_color: "#000000",  
-  theme_color: "#000000",  
-  icons: [  
-    { src: iconUrl, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }  
-  ]  
-};  
-const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});  
-const url = URL.createObjectURL(blob);  
-document.getElementById('manifest-placeholder').setAttribute('href', url);  
-</script>  
-<style>  
-@import url('https://fonts.googleapis.com/css2?family=Chivo:wght@400;700;900&display=swap');  
-*{box-sizing:border-box;}  
-html,body{height:100%;margin:0;font-family:'Chivo',sans-serif;background:#000;color:#fff;-webkit-tap-highlight-color:transparent;}  
-#app{display:none;}  
-#login{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;}  
-#menu{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;}  
-.lock{width:90px;height:90px;background:#000;border-radius:18px;border:2px solid #ff0000;display:flex;align-items:center;justify-content:center;margin-bottom:15px;animation:float 3s infinite;box-shadow:0 0 24px rgba(255,0,0,0.35);}  
-.lock-s{font-family:'Chivo',sans-serif;font-size:58px;font-weight:900;color:#ff0000;line-height:1;text-shadow:0 0 18px rgba(255,0,0,0.7);}  
-@keyframes float{50%{transform:translateY(-12px);}}  
-h1{color:#ff0000;text-shadow:0 0 10px red;margin:0;font-family:'Chivo',sans-serif;font-weight:900;letter-spacing:2px;}  
-h2{margin:10px 0;}  
-.menu{display:flex;flex-direction:column;gap:10px;width:220px;}  
-button{background:none;border:1px solid #444;color:#ccc;padding:12px;border-radius:6px;font-size:16px;cursor:pointer;width:60%;}  
-button:active{background:#222;}  
-input[type=password]{background:#111;border:1px solid #444;color:#fff;padding:10px;border-radius:6px;font-size:16px;width:220px;text-align:center;}  
-.screen{display:none;}  
-.active{display:flex;flex-direction:column;align-items:center;min-height:100%;padding-bottom:20px;}  
-.top-bar{display:flex;gap:10px;margin:15px;width:calc(100% - 30px);}  
-.top-bar button{flex:1;}  
-.card{background:#111;padding:15px;margin:10px 15px;border-radius:12px;width:calc(100% - 30px);display:flex;flex-direction:column;gap:8px;border:1px solid #222;}  
-.move-bar{display:flex;gap:8px;justify-content:flex-end;}  
-.move-bar button{width:auto;padding:6px 14px;font-size:18px;border-color:#333;}  
-textarea{width:100%;min-height:80px;padding:8px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:15px;resize:vertical;}  
-img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}  
-.file-btn{background:#1a1a1a;border:1px dashed #555;color:#888;font-size:13px;}  
-.del-img-btn{background:#1a0000;border:1px solid #550000;color:#f55;font-size:13px;padding:6px 12px;border-radius:6px;cursor:pointer;width:auto;align-self:flex-start;}  
-.del-img-btn:active{background:#330000;}  
-#error{color:#f55;font-size:14px;}  
-.loading{color:#888;font-size:14px;margin:20px;}  
-#fullscreenViewer{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:none;justify-content:center;align-items:center;z-index:9999;}  
-#fullscreenViewer img{max-width:95%;max-height:95%;border-radius:10px;}  
-#closeBtn{position:absolute;top:15px;right:20px;font-size:28px;color:#fff;cursor:pointer;background:rgba(0,0,0,0.5);padding:5px 10px;border-radius:50%;}  /* ── MODAL ── */
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="SLEB-WEB">
+<meta name="theme-color" content="#000000">
+<title>SLEB-WEB</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='115' fill='%23000000'/%3E%3Ctext x='256' y='370' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='380' fill='%23ff0000'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="manifest" id="manifest-placeholder">
+<script>
+const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="115" fill="#000000"/><text x="256" y="370" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="380" fill="#ff0000">S</text></svg>`;
+const iconUrl = 'data:image/svg+xml,' + encodeURIComponent(iconSvg);
+const manifest = {
+  name: "SLEB-WEB",
+  short_name: "SLEB",
+  start_url: ".",
+  display: "standalone",
+  background_color: "#000000",
+  theme_color: "#000000",
+  icons: [
+    { src: iconUrl, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
+  ]
+};
+const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+const url = URL.createObjectURL(blob);
+document.getElementById('manifest-placeholder').setAttribute('href', url);
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Chivo:wght@400;700;900&display=swap');
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;font-family:'Chivo',sans-serif;background:#000;color:#fff;-webkit-tap-highlight-color:transparent;}
+#app{display:none;}
+#login{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;}
+#menu{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;}
+.lock{width:90px;height:90px;background:#000;border-radius:18px;border:2px solid #ff0000;display:flex;align-items:center;justify-content:center;margin-bottom:15px;animation:float 3s infinite;box-shadow:0 0 24px rgba(255,0,0,0.35);}
+.lock-s{font-family:'Chivo',sans-serif;font-size:58px;font-weight:900;color:#ff0000;line-height:1;text-shadow:0 0 18px rgba(255,0,0,0.7);}
+@keyframes float{50%{transform:translateY(-12px);}}
+h1{color:#ff0000;text-shadow:0 0 10px red;margin:0;font-family:'Chivo',sans-serif;font-weight:900;letter-spacing:2px;}
+h2{margin:10px 0;}
+.menu{display:flex;flex-direction:column;gap:10px;width:220px;}
+button{background:none;border:1px solid #444;color:#ccc;padding:12px;border-radius:6px;font-size:16px;cursor:pointer;width:60%;}
+button:active{background:#222;}
+input[type=password]{background:#111;border:1px solid #444;color:#fff;padding:10px;border-radius:6px;font-size:16px;width:220px;text-align:center;}
+.screen{display:none;}
+.active{display:flex;flex-direction:column;align-items:center;min-height:100%;padding-bottom:20px;}
+.top-bar{display:flex;gap:10px;margin:15px;width:calc(100% - 30px);}
+.top-bar button{flex:1;}
+.card{background:#111;padding:15px;margin:10px 15px;border-radius:12px;width:calc(100% - 30px);display:flex;flex-direction:column;gap:8px;border:1px solid #222;}
+.move-bar{display:flex;gap:8px;justify-content:flex-end;}
+.move-bar button{width:auto;padding:6px 14px;font-size:18px;border-color:#333;}
+textarea{width:100%;min-height:80px;padding:8px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:15px;resize:vertical;}
+img.card-img{max-width:100%;border-radius:10px;cursor:pointer;}
+.file-btn{background:#1a1a1a;border:1px dashed #555;color:#888;font-size:13px;}
+.del-img-btn{background:#1a0000;border:1px solid #550000;color:#f55;font-size:13px;padding:6px 12px;border-radius:6px;cursor:pointer;width:auto;align-self:flex-start;}
+.del-img-btn:active{background:#330000;}
+#error{color:#f55;font-size:14px;}
+.loading{color:#888;font-size:14px;margin:20px;}
+#fullscreenViewer{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:none;justify-content:center;align-items:center;z-index:9999;}
+#fullscreenViewer img{max-width:95%;max-height:95%;border-radius:10px;}
+#closeBtn{position:absolute;top:15px;right:20px;font-size:28px;color:#fff;cursor:pointer;background:rgba(0,0,0,0.5);padding:5px 10px;border-radius:50%;}
+
+/* ── MODAL ── */
 #modalOverlay{
-position:fixed;inset:0;background:rgba(0,0,0,0.8);
-display:none;justify-content:center;align-items:center;
-z-index:10000;backdrop-filter:blur(8px);
+  position:fixed;inset:0;background:rgba(0,0,0,0.8);
+  display:none;justify-content:center;align-items:center;
+  z-index:10000;backdrop-filter:blur(8px);
 }
 #modalBox{
-background:#111;border:1px solid #222;
-border-radius:20px;padding:30px 22px 22px;
-width:88%;max-width:340px;
-display:flex;flex-direction:column;align-items:center;gap:12px;
-box-shadow:0 0 50px rgba(255,0,0,0.12);
-animation:slideUp .25s cubic-bezier(.34,1.56,.64,1);
+  background:#111;border:1px solid #222;
+  border-radius:20px;padding:30px 22px 22px;
+  width:88%;max-width:340px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  box-shadow:0 0 50px rgba(255,0,0,0.12);
+  animation:slideUp .25s cubic-bezier(.34,1.56,.64,1);
 }
 @keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
 #modalIcon{font-size:44px;line-height:1;}
 #modalTitle{font-size:18px;font-weight:700;color:#fff;margin:0;text-align:center;}
 #modalMsg{font-size:13px;color:#666;margin:0;text-align:center;line-height:1.5;}
 #modalInput{
-background:#1a1a1a;border:1px solid #2a2a2a;color:#fff;
-padding:13px 16px;border-radius:12px;font-size:16px;
-width:100%;text-align:center;letter-spacing:4px;
-outline:none;font-family:inherit;transition:border .2s,box-shadow .2s;
+  background:#1a1a1a;border:1px solid #2a2a2a;color:#fff;
+  padding:13px 16px;border-radius:12px;font-size:16px;
+  width:100%;text-align:center;letter-spacing:4px;
+  outline:none;font-family:inherit;transition:border .2s,box-shadow .2s;
 }
 #modalInput:focus{border-color:#ff0000;box-shadow:0 0 0 3px rgba(255,0,0,0.12);}
 #modalInput::placeholder{letter-spacing:0;color:#333;font-size:14px;}
@@ -97,373 +100,384 @@ outline:none;font-family:inherit;transition:border .2s,box-shadow .2s;
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
 .shake{animation:shake .35s ease;}
 </style>
+</head>
+<body>
 
-</head>  
-<body>  <div id="login">  
-  <div class="lock"><span class="lock-s">S</span></div>  
-  <h1>SLEB-WEB</h1>  
-  <input type="password" id="codeInput" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkCode()">  
-  <button onclick="checkCode()">Entrar</button>  
-  <p id="error"></p>  
-</div>  <div id="app">  
-  <div id="menu" class="screen active">  
-    <h2> Menú</h2>  
-    <div class="menu">  
-      <button onclick="openSection('ciudadania_valores')">🌍 Ciudadanía y Valores</button>  
-      <button onclick="openSection('lenguaje')">📖 Lenguaje</button>  
-      <button onclick="openSection('precalculo')">📐 Precálculo</button>  
-      <button onclick="openSection('ciencias')">🔬 Ciencias</button>  
-      <button onclick="openSection('ingles')">🇬🇧 Inglés</button>  
-      <button onclick="openSection('aleman')">🇩🇪 Alemán</button>  
-      <button onclick="openSection('frances')">🇫🇷 Francés</button>  
-      <button onclick="openGeheimnis()">📕 Geheimnis</button>  
-      <button onclick="openDazer()">💵🛍 DAZER</button>  
-      <button onclick="openLinks()">🔗 Links</button>  
-    </div>  
-    <br>  
-    <div class="menu">  
-      <button onclick="refreshApp()">🧊 Refrescar</button>  
-      <button onclick="logout()">🔒 Salir</button>  
-    </div>  
-  </div>  
-  <div id="ciudadania_valores" class="screen"></div>  
-  <div id="lenguaje" class="screen"></div>  
-  <div id="precalculo" class="screen"></div>  
-  <div id="ciencias" class="screen"></div>  
-  <div id="ingles" class="screen"></div>  
-  <div id="aleman" class="screen"></div>  
-  <div id="frances" class="screen"></div>  
-  <div id="secret" class="screen"></div>  
-  <div id="dazer" class="screen"></div>  
-  <div id="links" class="screen"></div>  
-</div>  <div id="fullscreenViewer">  
-  <span id="closeBtn" onclick="closeFullscreen()">✖</span>  
-  <img id="fullscreenImg">  
-</div>  <!-- MODAL BONITO -->  <div id="modalOverlay">  
-  <div id="modalBox">  
-    <div id="modalIcon">🔐</div>  
-    <p id="modalTitle">Código</p>  
-    <p id="modalMsg"></p>  
-    <input id="modalInput" type="password" placeholder="Introduce el código">  
-    <div class="modal-btns" id="modalBtns">  
-      <button id="modalCancel">Cancelar</button>  
-      <button id="modalConfirm">Confirmar</button>  
-    </div>  
-    <button id="modalOkBtn" style="display:none">Cerrar</button>  
-  </div>  
-</div>  <script type="module">  
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";  
-import { getFirestore, addDoc, updateDoc, doc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";  
-  
-const firebaseConfig = {  
-  apiKey: "AIzaSyAUxe5KsI0KbHguw41jPINqImdmzvpDNmI",  
-  authDomain: "sleb-web.firebaseapp.com",  
-  projectId: "sleb-web",  
-  storageBucket: "sleb-web.firebasestorage.app",  
-  messagingSenderId: "719197483079",  
-  appId: "1:719197483079:web:2a005105af5a40d86e4162"  
-};  
-  
-const app = initializeApp(firebaseConfig);  
-const db = getFirestore(app);  
-  
-const SECRET = "sixseven";  
-const DELETE_IMG_CODE = "123";  
-let listeners = {};  
-  
-// ── MODAL ENGINE ────────────────────────────────────────────  
-const overlay  = document.getElementById("modalOverlay");  
-const mIcon    = document.getElementById("modalIcon");  
-const mTitle   = document.getElementById("modalTitle");  
-const mMsg     = document.getElementById("modalMsg");  
-const mInput   = document.getElementById("modalInput");  
-const mBtns    = document.getElementById("modalBtns");  
-const mCancel  = document.getElementById("modalCancel");  
-const mConfirm = document.getElementById("modalConfirm");  
-const mOkBtn   = document.getElementById("modalOkBtn");  
-  
-function showPrompt({ icon="🔐", title="Código", msg="", placeholder="Introduce el código" }){  
-  return new Promise(resolve => {  
-    mIcon.textContent = icon;  
-    mTitle.textContent = title;  
-    mMsg.textContent = msg;  
-    mInput.value = "";  
-    mInput.placeholder = placeholder;  
-    mInput.style.display = "block";  
-    mBtns.style.display = "flex";  
-    mOkBtn.style.display = "none";  
-    overlay.style.display = "flex";  
-    setTimeout(() => mInput.focus(), 120);  
-  
-    const cleanup = () => {  
-      overlay.style.display = "none";  
-      mConfirm.removeEventListener("click", onOk);  
-      mCancel.removeEventListener("click", onNo);  
-      mInput.removeEventListener("keydown", onKey);  
-    };  
-    const onOk  = () => { cleanup(); resolve(mInput.value); };  
-    const onNo  = () => { cleanup(); resolve(null); };  
-    const onKey = e => { if(e.key==="Enter") onOk(); if(e.key==="Escape") onNo(); };  
-    mConfirm.addEventListener("click", onOk);  
-    mCancel.addEventListener("click", onNo);  
-    mInput.addEventListener("keydown", onKey);  
-  });  
-}  
-  
-function showAlert({ icon="❌", title="Error", msg="" }){  
-  return new Promise(resolve => {  
-    mIcon.textContent = icon;  
-    mTitle.textContent = title;  
-    mMsg.textContent = msg;  
-    mInput.style.display = "none";  
-    mBtns.style.display = "none";  
-    mOkBtn.style.display = "block";  
-    overlay.style.display = "flex";  
-    const onOk = () => { overlay.style.display="none"; mOkBtn.removeEventListener("click",onOk); resolve(); };  
-    mOkBtn.addEventListener("click", onOk);  
-  });  
-}  
-  
-function shakeModalInput(){  
-  mInput.classList.remove("shake");  
-  void mInput.offsetWidth;  
-  mInput.classList.add("shake");  
-  mInput.value = "";  
-}  
-// ────────────────────────────────────────────────────────────  
-  
-function checkCode(){  
-  const v = document.getElementById("codeInput").value;  
-  if(v === SECRET){  
-    document.getElementById("login").style.display = "none";  
-    document.getElementById("app").style.display = "block";  
-    localStorage.setItem("logged","true");  
-  } else {  
-    document.getElementById("error").textContent = "✕ Contraseña incorrecta";  
-  }  
-}  
-window.checkCode = checkCode;  
-  
-window.onload = function(){  
-  if(localStorage.getItem("logged") === "true"){  
-    document.getElementById("login").style.display = "none";  
-    document.getElementById("app").style.display = "block";  
-  }  
-};  
-  
-window.refreshApp = () => location.reload();  
-window.logout = () => { localStorage.removeItem("logged"); location.reload(); };  
-  
-window.openSection = function(id){  
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));  
-  const sec = document.getElementById(id);  
-  sec.classList.add("active");  
-  if(!sec.dataset.loaded) loadSection(id);  
-};  
-  
-window.openGeheimnis = async () => {  
-  const code = await showPrompt({  
-    icon: "📕",  
-    title: "Geheimnis",  
-    msg: "Sección privada. Introduce el código de acceso.",  
-    placeholder: "Código secreto"  
-  });  
-  if(code === null) return;  
-  if(code === "67") window.openSection("secret");  
-  else {  
-    shakeModalInput();  
-    await showAlert({ icon:"🚫", title:"Acceso denegado", msg:"Código incorrecto. Inténtalo de nuevo." });  
-  }  
-};  
-  
-window.openDazer = () => window.openSection("dazer");  
-  
-window.openLinks = async () => {  
-  const code = await showPrompt({  
-    icon: "🔗",  
-    title: "Links",  
-    msg: "Introduce el código para ver los links.",  
-    placeholder: "Código secreto"  
-  });  
-  if(code === null) return;  
-  if(code === "MARCO GAY") window.openSection("links");  
-  else {  
-    shakeModalInput();  
-    await showAlert({ icon:"🚫", title:"Acceso denegado", msg:"Código incorrecto. Inténtalo de nuevo." });  
-  }  
-};  
-  
-function openMenu(){  
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));  
-  document.getElementById("menu").classList.add("active");  
-}  
-window.openMenu = openMenu;  
-  
-window.openFullscreen = function(src){  
-  document.getElementById("fullscreenImg").src = src;  
-  document.getElementById("fullscreenViewer").style.display = "flex";  
-};  
-window.closeFullscreen = function(){  
-  document.getElementById("fullscreenViewer").style.display = "none";  
-};  
-  
-async function saveOrder(sectionId){  
-  const container = document.getElementById(sectionId);  
-  const cards = [...container.querySelectorAll(".card")];  
-  const updates = cards.map((card, idx) => {  
-    const docId = card.dataset.docId;  
-    if(docId) return updateDoc(doc(db, sectionId, docId), { order: idx });  
-  });  
-  await Promise.all(updates);  
-}  
-  
-function moveCard(card, direction, sectionId){  
-  const container = card.parentNode;  
-  if(direction === "up"){  
-    const prev = card.previousElementSibling;  
-    if(prev && prev.classList.contains("card")) container.insertBefore(card, prev);  
-  } else {  
-    const next = card.nextElementSibling;  
-    if(next && next.classList.contains("card")) container.insertBefore(next, card);  
-  }  
-  saveOrder(sectionId);  
-}  
-  
-async function loadSection(id){  
-  const container = document.getElementById(id);  
-  container.dataset.loaded = true;  
-  container.innerHTML = "";  
-  
-  const bar = document.createElement("div");  
-  bar.className = "top-bar";  
-  const back = document.createElement("button");  
-  back.textContent = "← Volver";  
-  back.onclick = openMenu;  
-  const add = document.createElement("button");  
-  add.textContent = "+ Añadir nota";  
-  add.onclick = () => addCard(id);  
-  bar.append(back, add);  
-  container.appendChild(bar);  
-  
-  const loading = document.createElement("p");  
-  loading.className = "loading";  
-  loading.textContent = "⏳ Cargando el SLEB espere un rato...";  
-  container.appendChild(loading);  
-  
-  if(listeners[id]) listeners[id]();  
-  listeners[id] = onSnapshot(collection(db, id), (snapshot) => {  
-    const cards = container.querySelectorAll(".card");  
-    cards.forEach(c => c.remove());  
-    const lp = container.querySelector(".loading");  
-    if(lp) lp.remove();  
-  
-    const docs = [];  
-    snapshot.forEach(docSnap => docs.push(docSnap));  
-    docs.sort((a, b) => {  
-      const ao = a.data().order ?? a.data().createdAt ?? 0;  
-      const bo = b.data().order ?? b.data().createdAt ?? 0;  
-      return ao - bo;  
-    });  
-  
-    docs.forEach(docSnap => {  
-      const data = docSnap.data();  
-      renderCard(id, docSnap.id, data.text || "", data.img || "");  
-    });  
-  });  
-}  
-  
-function renderCard(id, docId, text, imgSrc){  
-  const container = document.getElementById(id);  
-  const div = document.createElement("div");  
-  div.className = "card";  
-  div.dataset.docId = docId;  
-  
-  const moveBar = document.createElement("div");  
-  moveBar.className = "move-bar";  
-  const btnUp = document.createElement("button");  
-  btnUp.textContent = "⬆️";  
-  btnUp.onclick = () => moveCard(div, "up", id);  
-  const btnDown = document.createElement("button");  
-  btnDown.textContent = "⬇️";  
-  btnDown.onclick = () => moveCard(div, "down", id);  
-  moveBar.append(btnUp, btnDown);  
-  
-  const file = document.createElement("input");  
-  file.type = "file"; file.accept = "image/*"; file.style.display = "none";  
-  
-  const fileBtn = document.createElement("button");  
-  fileBtn.className = "file-btn";  
-  fileBtn.textContent = "imagen";  
-  fileBtn.onclick = () => file.click();  
-  
-  const img = document.createElement("img");  
-  img.className = "card-img";  
-  
-  const delImgBtn = document.createElement("button");  
-  delImgBtn.className = "del-img-btn";  
-  delImgBtn.textContent = "🗑 Borrar foto";  
-  delImgBtn.style.display = "none";  
-  delImgBtn.onclick = async () => {  
-    const code = await showPrompt({  
-      icon: "🗑️",  
-      title: "Borrar foto",  
-      msg: "Introduce el código para eliminar esta imagen.",  
-      placeholder: "Código"  
-    });  
-    if(code === null) return;  
-    if(code === DELETE_IMG_CODE){  
-      img.src = "";  
-      img.style.display = "none";  
-      delImgBtn.style.display = "none";  
-      fileBtn.style.display = "";  
-      await updateDoc(doc(db, id, docId), { img: "" });  
-      await showAlert({ icon:"✅", title:"Foto eliminada", msg:"La imagen se borró correctamente." });  
-    } else {  
-      shakeModalInput();  
-      await showAlert({ icon:"❌", title:"Código incorrecto", msg:"No se pudo borrar la foto. Inténtalo de nuevo." });  
-    }  
-  };  
-  
-  if(imgSrc){  
-    img.src = imgSrc;  
-    img.style.display = "block";  
-    fileBtn.style.display = "none";  
-    delImgBtn.style.display = "";  
-    img.onclick = () => openFullscreen(img.src);  
-  } else {  
-    img.style.display = "none";  
-  }  
-  
-  file.onchange = () => {  
-    const r = new FileReader();  
-    r.onload = async e => {  
-      img.src = e.target.result;  
-      img.style.display = "block";  
-      fileBtn.style.display = "none";  
-      delImgBtn.style.display = "";  
-      img.onclick = () => openFullscreen(img.src);  
-      await updateDoc(doc(db, id, docId), { img: e.target.result });  
-    };  
-    r.readAsDataURL(file.files[0]);  
-  };  
-  
-  const ta = document.createElement("textarea");  
-  ta.value = text;  
-  ta.placeholder = "Escribe aquí tu nota...";  
-  let timer;  
-  ta.oninput = () => {  
-    clearTimeout(timer);  
-    timer = setTimeout(async () => {  
-      await updateDoc(doc(db, id, docId), { text: ta.value });  
-    }, 800);  
-  };  
-  
-  div.append(moveBar, fileBtn, file, img, delImgBtn, ta);  
-  container.appendChild(div);  
-}  
-  
-async function addCard(id){  
-  await addDoc(collection(db, id), { text: "", img: "", createdAt: Date.now(), order: Date.now() });  
-}  
-</script>  </body>  
+<div id="login">
+  <div class="lock"><span class="lock-s">S</span></div>
+  <h1>SLEB-WEB</h1>
+  <input type="password" id="codeInput" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkCode()">
+  <button onclick="checkCode()">Entrar</button>
+  <p id="error"></p>
+</div>
+
+<div id="app">
+  <div id="menu" class="screen active">
+    <h2> Menú</h2>
+    <div class="menu">
+      <button onclick="openSection('ciudadania_valores')">🌍 Ciudadanía y Valores</button>
+      <button onclick="openSection('lenguaje')">📖 Lenguaje</button>
+      <button onclick="openSection('precalculo')">📐 Precálculo</button>
+      <button onclick="openSection('ciencias')">🔬 Ciencias</button>
+      <button onclick="openSection('ingles')">🇬🇧 Inglés</button>
+      <button onclick="openSection('aleman')">🇩🇪 Alemán</button>
+      <button onclick="openSection('frances')">🇫🇷 Francés</button>
+      <button onclick="openGeheimnis()">📕 Geheimnis</button>
+      <button onclick="openDazer()">💵🛍 DAZER</button>
+      <button onclick="openLinks()">🔗 Links</button>
+    </div>
+    <br>
+    <div class="menu">
+      <button onclick="refreshApp()">🧊 Refrescar</button>
+      <button onclick="logout()">🔒 Salir</button>
+    </div>
+  </div>
+  <div id="ciudadania_valores" class="screen"></div>
+  <div id="lenguaje" class="screen"></div>
+  <div id="precalculo" class="screen"></div>
+  <div id="ciencias" class="screen"></div>
+  <div id="ingles" class="screen"></div>
+  <div id="aleman" class="screen"></div>
+  <div id="frances" class="screen"></div>
+  <div id="secret" class="screen"></div>
+  <div id="dazer" class="screen"></div>
+  <div id="links" class="screen"></div>
+</div>
+
+<div id="fullscreenViewer">
+  <span id="closeBtn" onclick="closeFullscreen()">✖</span>
+  <img id="fullscreenImg">
+</div>
+
+<!-- MODAL BONITO -->
+<div id="modalOverlay">
+  <div id="modalBox">
+    <div id="modalIcon">🔐</div>
+    <p id="modalTitle">Código</p>
+    <p id="modalMsg"></p>
+    <input id="modalInput" type="password" placeholder="Introduce el código">
+    <div class="modal-btns" id="modalBtns">
+      <button id="modalCancel">Cancelar</button>
+      <button id="modalConfirm">Confirmar</button>
+    </div>
+    <button id="modalOkBtn" style="display:none">Cerrar</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, addDoc, updateDoc, doc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAUxe5KsI0KbHguw41jPINqImdmzvpDNmI",
+  authDomain: "sleb-web.firebaseapp.com",
+  projectId: "sleb-web",
+  storageBucket: "sleb-web.firebasestorage.app",
+  messagingSenderId: "719197483079",
+  appId: "1:719197483079:web:2a005105af5a40d86e4162"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const SECRET = "sixseven";
+const DELETE_IMG_CODE = "123";
+let listeners = {};
+
+// ── MODAL ENGINE ────────────────────────────────────────────
+const overlay  = document.getElementById("modalOverlay");
+const mIcon    = document.getElementById("modalIcon");
+const mTitle   = document.getElementById("modalTitle");
+const mMsg     = document.getElementById("modalMsg");
+const mInput   = document.getElementById("modalInput");
+const mBtns    = document.getElementById("modalBtns");
+const mCancel  = document.getElementById("modalCancel");
+const mConfirm = document.getElementById("modalConfirm");
+const mOkBtn   = document.getElementById("modalOkBtn");
+
+function showPrompt({ icon="🔐", title="Código", msg="", placeholder="Introduce el código" }){
+  return new Promise(resolve => {
+    mIcon.textContent = icon;
+    mTitle.textContent = title;
+    mMsg.textContent = msg;
+    mInput.value = "";
+    mInput.placeholder = placeholder;
+    mInput.style.display = "block";
+    mBtns.style.display = "flex";
+    mOkBtn.style.display = "none";
+    overlay.style.display = "flex";
+    setTimeout(() => mInput.focus(), 120);
+
+    const cleanup = () => {
+      overlay.style.display = "none";
+      mConfirm.removeEventListener("click", onOk);
+      mCancel.removeEventListener("click", onNo);
+      mInput.removeEventListener("keydown", onKey);
+    };
+    const onOk  = () => { cleanup(); resolve(mInput.value); };
+    const onNo  = () => { cleanup(); resolve(null); };
+    const onKey = e => { if(e.key==="Enter") onOk(); if(e.key==="Escape") onNo(); };
+    mConfirm.addEventListener("click", onOk);
+    mCancel.addEventListener("click", onNo);
+    mInput.addEventListener("keydown", onKey);
+  });
+}
+
+function showAlert({ icon="❌", title="Error", msg="" }){
+  return new Promise(resolve => {
+    mIcon.textContent = icon;
+    mTitle.textContent = title;
+    mMsg.textContent = msg;
+    mInput.style.display = "none";
+    mBtns.style.display = "none";
+    mOkBtn.style.display = "block";
+    overlay.style.display = "flex";
+    const onOk = () => { overlay.style.display="none"; mOkBtn.removeEventListener("click",onOk); resolve(); };
+    mOkBtn.addEventListener("click", onOk);
+  });
+}
+
+function shakeModalInput(){
+  mInput.classList.remove("shake");
+  void mInput.offsetWidth;
+  mInput.classList.add("shake");
+  mInput.value = "";
+}
+// ────────────────────────────────────────────────────────────
+
+function checkCode(){
+  const v = document.getElementById("codeInput").value;
+  if(v === SECRET){
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    localStorage.setItem("logged","true");
+  } else {
+    document.getElementById("error").textContent = "✕ Contraseña incorrecta";
+  }
+}
+window.checkCode = checkCode;
+
+window.onload = function(){
+  if(localStorage.getItem("logged") === "true"){
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "block";
+  }
+};
+
+window.refreshApp = () => location.reload();
+window.logout = () => { localStorage.removeItem("logged"); location.reload(); };
+
+window.openSection = function(id){
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  const sec = document.getElementById(id);
+  sec.classList.add("active");
+  if(!sec.dataset.loaded) loadSection(id);
+};
+
+window.openGeheimnis = async () => {
+  const code = await showPrompt({
+    icon: "📕",
+    title: "Geheimnis",
+    msg: "Sección privada. Introduce el código de acceso.",
+    placeholder: "Código secreto"
+  });
+  if(code === null) return;
+  if(code === "67") window.openSection("secret");
+  else {
+    shakeModalInput();
+    await showAlert({ icon:"🚫", title:"Acceso denegado", msg:"Código incorrecto. Inténtalo de nuevo." });
+  }
+};
+
+window.openDazer = () => window.openSection("dazer");
+
+window.openLinks = async () => {
+  const code = await showPrompt({
+    icon: "🔗",
+    title: "Links",
+    msg: "Introduce el código para ver los links.",
+    placeholder: "Código secreto"
+  });
+  if(code === null) return;
+  if(code === "MARCO GAY") window.openSection("links");
+  else {
+    shakeModalInput();
+    await showAlert({ icon:"🚫", title:"Acceso denegado", msg:"Código incorrecto. Inténtalo de nuevo." });
+  }
+};
+
+function openMenu(){
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById("menu").classList.add("active");
+}
+window.openMenu = openMenu;
+
+window.openFullscreen = function(src){
+  document.getElementById("fullscreenImg").src = src;
+  document.getElementById("fullscreenViewer").style.display = "flex";
+};
+window.closeFullscreen = function(){
+  document.getElementById("fullscreenViewer").style.display = "none";
+};
+
+async function saveOrder(sectionId){
+  const container = document.getElementById(sectionId);
+  const cards = [...container.querySelectorAll(".card")];
+  const updates = cards.map((card, idx) => {
+    const docId = card.dataset.docId;
+    if(docId) return updateDoc(doc(db, sectionId, docId), { order: idx });
+  });
+  await Promise.all(updates);
+}
+
+function moveCard(card, direction, sectionId){
+  const container = card.parentNode;
+  if(direction === "up"){
+    const prev = card.previousElementSibling;
+    if(prev && prev.classList.contains("card")) container.insertBefore(card, prev);
+  } else {
+    const next = card.nextElementSibling;
+    if(next && next.classList.contains("card")) container.insertBefore(next, card);
+  }
+  saveOrder(sectionId);
+}
+
+async function loadSection(id){
+  const container = document.getElementById(id);
+  container.dataset.loaded = true;
+  container.innerHTML = "";
+
+  const bar = document.createElement("div");
+  bar.className = "top-bar";
+  const back = document.createElement("button");
+  back.textContent = "← Volver";
+  back.onclick = openMenu;
+  const add = document.createElement("button");
+  add.textContent = "+ Añadir nota";
+  add.onclick = () => addCard(id);
+  bar.append(back, add);
+  container.appendChild(bar);
+
+  const loading = document.createElement("p");
+  loading.className = "loading";
+  loading.textContent = "⏳ Cargando el SLEB espere un rato...";
+  container.appendChild(loading);
+
+  if(listeners[id]) listeners[id]();
+  listeners[id] = onSnapshot(collection(db, id), (snapshot) => {
+    const cards = container.querySelectorAll(".card");
+    cards.forEach(c => c.remove());
+    const lp = container.querySelector(".loading");
+    if(lp) lp.remove();
+
+    const docs = [];
+    snapshot.forEach(docSnap => docs.push(docSnap));
+    docs.sort((a, b) => {
+      const ao = a.data().order ?? a.data().createdAt ?? 0;
+      const bo = b.data().order ?? b.data().createdAt ?? 0;
+      return ao - bo;
+    });
+
+    docs.forEach(docSnap => {
+      const data = docSnap.data();
+      renderCard(id, docSnap.id, data.text || "", data.img || "");
+    });
+  });
+}
+
+function renderCard(id, docId, text, imgSrc){
+  const container = document.getElementById(id);
+  const div = document.createElement("div");
+  div.className = "card";
+  div.dataset.docId = docId;
+
+  const moveBar = document.createElement("div");
+  moveBar.className = "move-bar";
+  const btnUp = document.createElement("button");
+  btnUp.textContent = "⬆️";
+  btnUp.onclick = () => moveCard(div, "up", id);
+  const btnDown = document.createElement("button");
+  btnDown.textContent = "⬇️";
+  btnDown.onclick = () => moveCard(div, "down", id);
+  moveBar.append(btnUp, btnDown);
+
+  const file = document.createElement("input");
+  file.type = "file"; file.accept = "image/*"; file.style.display = "none";
+
+  const fileBtn = document.createElement("button");
+  fileBtn.className = "file-btn";
+  fileBtn.textContent = "imagen";
+  fileBtn.onclick = () => file.click();
+
+  const img = document.createElement("img");
+  img.className = "card-img";
+
+  const delImgBtn = document.createElement("button");
+  delImgBtn.className = "del-img-btn";
+  delImgBtn.textContent = "🗑 Borrar foto";
+  delImgBtn.style.display = "none";
+  delImgBtn.onclick = async () => {
+    const code = await showPrompt({
+      icon: "🗑️",
+      title: "Borrar foto",
+      msg: "Introduce el código para eliminar esta imagen.",
+      placeholder: "Código"
+    });
+    if(code === null) return;
+    if(code === DELETE_IMG_CODE){
+      img.src = "";
+      img.style.display = "none";
+      delImgBtn.style.display = "none";
+      fileBtn.style.display = "";
+      await updateDoc(doc(db, id, docId), { img: "" });
+      await showAlert({ icon:"✅", title:"Foto eliminada", msg:"La imagen se borró correctamente." });
+    } else {
+      shakeModalInput();
+      await showAlert({ icon:"❌", title:"Código incorrecto", msg:"No se pudo borrar la foto. Inténtalo de nuevo." });
+    }
+  };
+
+  if(imgSrc){
+    img.src = imgSrc;
+    img.style.display = "block";
+    fileBtn.style.display = "none";
+    delImgBtn.style.display = "";
+    img.onclick = () => openFullscreen(img.src);
+  } else {
+    img.style.display = "none";
+  }
+
+  file.onchange = () => {
+    const r = new FileReader();
+    r.onload = async e => {
+      img.src = e.target.result;
+      img.style.display = "block";
+      fileBtn.style.display = "none";
+      delImgBtn.style.display = "";
+      img.onclick = () => openFullscreen(img.src);
+      await updateDoc(doc(db, id, docId), { img: e.target.result });
+    };
+    r.readAsDataURL(file.files[0]);
+  };
+
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.placeholder = "Escribe aquí tu nota...";
+  let timer;
+  ta.oninput = () => {
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      await updateDoc(doc(db, id, docId), { text: ta.value });
+    }, 800);
+  };
+
+  div.append(moveBar, fileBtn, file, img, delImgBtn, ta);
+  container.appendChild(div);
+}
+
+async function addCard(id){
+  await addDoc(collection(db, id), { text: "", img: "", createdAt: Date.now(), order: Date.now() });
+}
+</script>
+</body>
 </html>
